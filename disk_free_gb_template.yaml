@@ -1,0 +1,45 @@
+zabbix_export:
+  version: '7.0'
+  date: '2025-09-29T16:00:00Z'
+  groups:
+    - name: Templates/Operating systems
+  templates:
+    - template: 'Template OS Windows Disk Free (GB)'
+      name: 'Template OS Windows Disk Free (GB)'
+      description: >
+        Мониторинг свободного места по файловым системам с триггером в ГИГАБАЙТАХ.
+        Порог управляется макросом {$DISK.FREE.MIN.B} (байты). По умолчанию 10ГБ.
+      groups:
+        - name: Templates/Operating systems
+      macros:
+        - macro: '{$DISK.FREE.MIN.B}'
+          value: '10737418240'
+          description: 'Минимум свободного места в байтах (по умолчанию 10ГБ)'
+      discovery_rules:
+        - name: 'Filesystem discovery'
+          type: ZABBIX_AGENT
+          key: 'vfs.fs.discovery'
+          delay: '1h'
+          item_prototypes:
+            - name: 'Free space on {#FSNAME}'
+              type: ZABBIX_AGENT
+              key: 'vfs.fs.size[{#FSNAME},free]'
+              value_type: UNSIGNED
+              units: B
+              history: 7d
+              trends: 365d
+              tags:
+                - tag: component
+                  value: storage
+                - tag: fs
+                  value: '{#FSNAME}'
+          trigger_prototypes:
+            - name: 'Мало места на {#FSNAME}: свободно < {$DISK.FREE.MIN.B} ({ITEM.LASTVALUE})'
+              expression: 'last(/Template OS Windows Disk Free (GB)/vfs.fs.size[{#FSNAME},free])<{$DISK.FREE.MIN.B}'
+              priority: HIGH
+              manual_close: '1'
+              tags:
+                - tag: scope
+                  value: availability
+                - tag: fs
+                  value: '{#FSNAME}'
