@@ -1,0 +1,6 @@
+sudo cp backup.service backup.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now backup.timer
+# Проверка
+systemctl list-timers --all | grep backup
+journalctl -u backup.service -n 50 --no-pager

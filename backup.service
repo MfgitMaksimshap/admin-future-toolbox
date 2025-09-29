@@ -1,0 +1,13 @@
+[Unit]
+Description=Nightly backup job (Admin Future)
+Wants=backup.timer
+
+[Service]
+Type=oneshot
+# Пример: ваш сценарий резервного копирования
+# Обновите путь на свой скрипт (не забудьте chmod +x)
+ExecStart=/usr/local/bin/backup.sh
+# Опционально: окружение
+# Environment=BACKUP_TARGET=/backups
+# StandardOutput=journal
+# StandardError=journal

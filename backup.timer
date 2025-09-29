@@ -1,0 +1,10 @@
+[Unit]
+Description=Run backup daily at 02:00 (Admin Future)
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+Unit=backup.service
+
+[Install]
+WantedBy=timers.target
